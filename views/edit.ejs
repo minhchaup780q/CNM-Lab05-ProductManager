@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập Nhật Sản Phẩm</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f4f7f6; padding-top: 50px; padding-bottom: 50px; }
+        .form-container { 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            max-width: 600px; 
+            margin: auto; 
+        }
+        .current-img-preview {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 5px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4">Cập Nhật Sản Phẩm</h2>
+            
+            <form action="/products/edit" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="<%= product.id %>">
+                <input type="hidden" name="oldImage" value="<%= product.image %>">
+
+                <div class="form-group">
+                    <label class="font-weight-bold">ID Sản phẩm:</label>
+                    <input type="text" class="form-control" value="<%= product.id %>" disabled>
+                    <small class="text-muted">ID sản phẩm không thể thay đổi.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="font-weight-bold">Tên sản phẩm:</label>
+                    <input type="text" name="name" value="<%= product.name %>" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="font-weight-bold">Giá ($):</label>
+                    <input type="number" name="price" value="<%= product.price %>" step="0.01" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="font-weight-bold">Số lượng:</label>
+                    <input type="number" name="quantity" value="<%= product.quantity %>" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="font-weight-bold">Hình ảnh hiện tại:</label><br>
+                    <div class="mb-2">
+                        <img src="<%= cloudfrontUrl %><%= product.image %>" width="120" class="current-img-preview" alt="Current Image">
+                    </div>
+                    <label class="font-weight-bold">Thay đổi hình ảnh (nếu cần):</label>
+                    <input type="file" name="image" class="form-control-file" accept="image/*">
+                    <small class="text-info font-italic">(Để trống nếu muốn giữ nguyên ảnh cũ)</small>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-5">Cập nhật sản phẩm</button>
+                    <a href="/products" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

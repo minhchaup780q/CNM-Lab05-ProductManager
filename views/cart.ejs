@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng của bạn</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; min-height: 100vh; }
+        .main-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            width: 95%;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+        h2 { font-weight: 800; color: #2c3e50; letter-spacing: -1px; }
+        .table thead { background-color: #2c3e50; color: white; border: none; }
+        .table-responsive { border-radius: 12px; overflow: hidden; border: 1px solid #dee2e6; }
+        .img-cart {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .qty-input {
+            width: 40px;
+            text-align: center;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .btn-qty {
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .total-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px dashed #ced4da;
+        }
+        .price-text { color: #e74c3c; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-shopping-basket mr-2"></i>Giỏ hàng</h2>
+            <a href="/products" class="btn btn-outline-dark btn-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Tiếp tục mua sắm
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead>
+                    <tr>
+                        <th>Ảnh</th>
+                        <th class="text-left">Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (cart.length > 0) { %>
+                        <% cart.forEach(item => { %>
+                            <tr>
+                                <td class="align-middle">
+                                    <img src="<%= cloudfrontUrl %><%= item.image %>" 
+                                         class="img-cart" 
+                                         onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                                </td>
+                                <td class="align-middle text-left font-weight-bold"><%= item.name %></td>
+                                <td class="align-middle">$<%= item.price %></td>
+                                <td class="align-middle">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="btn-group shadow-sm">
+                                            <a href="/products/cart/decrease/<%= item.id %>" class="btn btn-light btn-qty">-</a>
+                                            <span class="qty-input py-1 border-top border-bottom bg-white"><%= item.quantity %></span>
+                                            <a href="/products/cart/increase/<%= item.id %>" class="btn btn-light btn-qty">+</a>
+                                        </div>
+                                        <a href="/products/cart/remove/<%= item.id %>" class="text-danger ml-3" title="Xóa khỏi giỏ">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="align-middle price-text">$<%= (item.price * item.quantity).toFixed(2) %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="py-5 text-muted">
+                                <i class="fas fa-shopping-cart fa-3x mb-3 d-block"></i>
+                                <p>Giỏ hàng của bạn đang trống.</p>
+                                <a href="/products" class="btn btn-primary">Mua sắm ngay</a>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <% if (cart.length > 0) { %>
+            <div class="row mt-4">
+                <div class="col-md-6 offset-md-6">
+                    <div class="total-section text-right">
+                        <p class="mb-1 text-muted">Tạm tính: <strong>$<%= total.toFixed(2) %></strong></p>
+                        <h3 class="mb-3">Tổng cộng: <span class="price-text">$<%= total.toFixed(2) %></span></h3>
+                        <button class="btn btn-primary btn-lg btn-block shadow">
+                            <i class="fas fa-credit-card mr-2"></i>Thanh toán ngay
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

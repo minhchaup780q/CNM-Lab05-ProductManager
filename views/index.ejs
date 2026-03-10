@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Sản phẩm</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .main-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            width: 95%;
+            max-width: 1100px;
+            margin: 50px auto;
+        }
+        /* Header styling */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+        }
+        /* Cart button styling */
+        .cart-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            border-radius: 50%;
+            padding: 4px 7px;
+            font-size: 10px;
+        }
+        /* Table styling */
+        .table thead {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+        }
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        .img-product {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .btn-action-group .btn {
+            margin: 2px;
+            border-radius: 6px;
+        }
+        h1 {
+            font-weight: 800;
+            color: #2c3e50;
+            letter-spacing: -1px;
+        }
+        .price-text {
+            color: #e74c3c;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="page-header">
+            <h1>Sản phẩm</h1>
+            
+            <div class="search-box">
+                <form action="/products" method="GET" class="input-group">
+                    <input type="text" name="name" class="form-control" 
+                           placeholder="Tìm sản phẩm..." value="<%= keyword %>">
+                    <div class="input-group-append">
+                        <button class="btn btn-dark" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="header-actions mt-2 mt-md-0">
+                <a href="/products/cart" class="cart-wrapper btn btn-outline-dark mr-3">
+                    <i class="fas fa-shopping-basket fa-lg"></i>
+                    <!-- <span class="badge badge-danger cart-badge">
+                        <%= typeof cartCount !== 'undefined' ? cartCount : 0 %>
+                    </span> -->
+                </a>
+                <a href="/products/create" class="btn btn-primary px-4 shadow-sm">
+                    <i class="fas fa-plus mr-2"></i>Thêm mới
+                </a>
+            </div>
+        </div>
+
+        <% if (keyword) { %>
+            <div class="mb-3">
+                <span class="text-muted">Kết quả tìm kiếm cho: <strong>"<%= keyword %>"</strong></span>
+                <a href="/products" class="ml-2 text-danger"><i class="fas fa-times-circle"></i> Xóa lọc</a>
+            </div>
+        <% } %>
+
+        <div class="table-responsive">
+            <table class="table table-hover text-center mb-0">
+                <thead>
+                    <tr>
+                        <th width="80">ID</th>
+                        <th class="text-left">Tên sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Kho</th>
+                        <th>Hình ảnh</th>
+                        <th width="200">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof products !== 'undefined' && products.length > 0) { %>
+                        <% products.forEach(function(product) { %>
+                        <tr>
+                            <td class="align-middle text-muted">#<%= product.id %></td>
+                            <td class="align-middle text-left font-weight-bold"><%= product.name %></td>
+                            <td class="align-middle price-text font-weight-bold">$<%= product.price %></td>
+                            <td class="align-middle">
+                                <span class="badge badge-pill <%= product.quantity > 5 ? 'badge-light border' : 'badge-warning' %>">
+                                    <%= product.quantity %> sp
+                                </span>
+                            </td>
+                            <td class="align-middle">
+                                <img src="<%= cloudfrontUrl %><%= product.image %>" 
+                                     alt="<%= product.name %>" 
+                                     class="img-product"
+                                     onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=No+Image';">
+                            </td>
+                            <td class="align-middle">
+                                <div class="btn-action-group">
+                                    <a href="/products/add-to-cart/<%= product.id %>" class="btn btn-light btn-sm text-success" title="Thêm vào giỏ">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </a>
+                                    <a href="/products/edit/<%= product.id %>" class="btn btn-light btn-sm text-primary" title="Sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/products/delete/<%= product.id %>" method="POST" class="d-inline" onsubmit="return confirm('Xóa sản phẩm này?');">
+                                        <button type="submit" class="btn btn-light btn-sm text-danger" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="py-5 text-center text-muted">
+                                <i class="fas fa-box-open fa-3x mb-3 d-block"></i>
+                                <p>Không tìm thấy sản phẩm nào.</p>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
